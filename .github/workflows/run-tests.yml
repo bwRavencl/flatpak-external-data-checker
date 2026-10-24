@@ -141,6 +141,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase repository name
+        run: echo "DOCKER_IMAGE=${DOCKER_IMAGE,,}" >> $GITHUB_ENV
+
       - name: Push image to registry
         if: github.event_name != 'pull_request'
         # 7.1.0
@@ -151,29 +154,29 @@ jobs:
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:latest
           push: true
 
-      - name: Login to ghcr.io using Flathub credentials
-        if: github.event_name != 'pull_request'
-        # 4.1.0
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.FLATHUB_ORG_USER }}
-          password: ${{ secrets.FLATHUB_ORG_TOKEN }}
+      # - name: Login to ghcr.io using Flathub credentials
+      #   if: github.event_name != 'pull_request'
+      #   # 4.1.0
+      #   uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ secrets.FLATHUB_ORG_USER }}
+      #     password: ${{ secrets.FLATHUB_ORG_TOKEN }}
 
-      - name: Push image to the old location
-        if: github.event_name != 'pull_request'
-        # 7.1.0
-        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
-        with:
-          context: .
-          file: ./Dockerfile
-          tags: ghcr.io/flathub/flatpak-external-data-checker:latest
-          push: true
+      # - name: Push image to the old location
+      #   if: github.event_name != 'pull_request'
+      #   # 7.1.0
+      #   uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile
+      #     tags: ghcr.io/flathub/flatpak-external-data-checker:latest
+      #     push: true
 
-      - name: Save pip downloads cache
-        # 5.0.5
-        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
-        if: github.repository == 'flathub-infra/flatpak-external-data-checker' && github.ref == 'refs/heads/master'
-        with:
-          path: ~/.pip
-          key: pip-${{ runner.os }}-coveralls-4.1.0
+      # - name: Save pip downloads cache
+      #   # 5.0.5
+      #   uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      #   if: github.repository == 'flathub-infra/flatpak-external-data-checker' && github.ref == 'refs/heads/master'
+      #   with:
+      #     path: ~/.pip
+      #     key: pip-${{ runner.os }}-coveralls-4.1.0
